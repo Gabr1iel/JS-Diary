@@ -11,12 +11,17 @@
         <div class="half">
             <form id="form">
                 <label class="label">Title</label>
-                <input type="text" id="name" name="name" class="input"/>
+                <input type="text" id="titleInput" title="title" class="input"/>
+                <label class="label">Description</label>
+                <input type="text" id="descInput" description="description" class="input"/>
+                <label class="label">When</label>
+                <input type="date" id="dateInput" date="date" class="input"/>
+                <button type="submit">Save</button>
             </form>
         </div>
     
         <div class="half">
-            <table id="infoTable"></table>
+            <div id="diary-wrapper"></div>
         </div>
     </div>
     <script src="script.js"></script>
