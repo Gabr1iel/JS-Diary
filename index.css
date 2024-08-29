@@ -16,6 +16,20 @@ form {
 
 #diary-wrapper {
     width: 95%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.unique-diary-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#date-input-wrapper {
+    display: flex;
 }
 
 .diary-content {

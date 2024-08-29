@@ -1,24 +1,40 @@
+const dateFilterInput = document.getElementById("dateSelectInput");
 const diaryWrapper = document.getElementById("diary-wrapper");
+let currentDate = (new Date).toISOString().split('T')[0];
+let titleInput = document.getElementById("titleInput");
+let descriptionInput = document.getElementById("descInput");
+let dateInput = document.getElementById("dateInput");
 let deleteBtn = document.createElement("button");
 let keys = Object.keys(localStorage);
 let lsLength = localStorage.length;
-let uniqueFinalDates = [];
+let filterDate = currentDate;
+let updateKey = "";
 let lsArr = [];
+let diaryEntries = lsArr.filter(obj => obj.untilDate === filterDate);
 
 function updateValues() {
-    console.log(keys)
     keys = Object.keys(localStorage);
     getDateObject();
     lsLength = localStorage.length;
-
-    
-    console.log(keys)
-    console.log(lsLength)
-    console.log(lsArr)
 }
 
-function rerenderContent(lsLength) {
-    for(let i = 0; i < lsLength; i++) {
+function changeDate(increment) {
+    let prevValue = new Date(dateFilterInput.value);
+    if (increment) {
+        prevValue.setDate(prevValue.getDate() + 1);
+        filterDate = prevValue.toISOString().split('T')[0];
+        dateFilterInput.value = filterDate;
+        showContent();
+    } else {
+        prevValue.setDate(prevValue.getDate() - 1);
+        filterDate = prevValue.toISOString().split('T')[0];
+        dateFilterInput.value = filterDate
+        showContent();
+    }
+}
+
+function rerenderContent(diaryEntries) {
+    for(let i = 0; i < diaryEntries.length; i++) {
        let element = diaryWrapper.getElementsByClassName("unique-diary-wrapper")[0];
 
        if (element) {
@@ -27,49 +43,59 @@ function rerenderContent(lsLength) {
     }
 }
 
-function showContent(lsLength) {
+function showContent() {
     updateValues();
-    rerenderContent(lsLength);
-    for(let i = 0; i < uniqueFinalDates.length; i++) {
-        const uniqueDate = uniqueFinalDates[i];
-        console.log(uniqueFinalDates)
-        let diaryEntries = lsArr.filter(obj => obj.untilDate === uniqueDate);
-        console.log(diaryEntries);
-        const uniqueDateWrapper = document.createElement("div");
-        const uniqueDateTxt = uniqueDate;
+    const uniqueDate = filterDate;
+    const uniqueDateWrapper = document.createElement("div");
 
-        uniqueDateWrapper.setAttribute("id", uniqueDate);
-        uniqueDateWrapper.classList.add("unique-diary-wrapper");
-
-        diaryWrapper.append(uniqueDateWrapper); 
-        uniqueDateWrapper.append(uniqueDateTxt);     
+    uniqueDateWrapper.setAttribute("id", uniqueDate);
+    uniqueDateWrapper.classList.add("unique-diary-wrapper");
+    const prevEntries = diaryEntries;
+    diaryEntries = lsArr.filter(obj => obj.untilDate === uniqueDate);
+    
+    if (diaryEntries.length === 0) {
+        diaryEntries = prevEntries;
+        rerenderContent(diaryEntries);
+        diaryWrapper.append(uniqueDateWrapper);
+        uniqueDateWrapper.innerText = "No tasks added yet"
+    } else {
+        rerenderContent(diaryEntries);
+        diaryWrapper.append(uniqueDateWrapper);
         
         for(let x = 0; x < diaryEntries.length; x++) {
             const diaryEntry = diaryEntries[x];
-            console.log(diaryEntry)
             const dContent = document.createElement("div");
             const diaryText = document.createElement("div");
             const p = document.createElement("p");
             const h2 = document.createElement("h2");
             const time = document.createElement("span");
             const buttonWrapper = document.createElement("div");
+            const updateBtn = document.createElement("button");
             const buttons = deleteBtn.cloneNode(true);
 
             dContent.classList.add("diary-content")
             const result = countTime(uniqueDate);
-            console.log(result)
-            if (result <= 1) {
+            if (result == 1) {
                 time.style.color = "red";
-            } 
-            if (result < 0) {
-                const entriesToDlt = lsArr.filter(obj => obj.untilDate === uniqueDate);
-                for(let y = 0; y < entriesToDlt.length; y++) {
-                    const key = entriesToDlt[y].key;
-                    localStorage.removeItem(key);
-                    showContent();
-                }
-            } 
+            } else if (result == 0) {
+                time.style.color = "#8B0000";
+            } else if (result < 0) {
+                time.style.color = "#8B0000";
+                dContent.style.backgroundColor = "rgb(217, 105, 98)";
+            }
 
+            updateBtn.classList.add("update-btn");
+            updateBtn.textContent = "Update";
+            updateBtn.setAttribute("id", diaryEntry.key);
+            updateBtn.addEventListener("click", function() {
+                const keyId = updateBtn.getAttribute("id");
+                const updateEntry = JSON.parse(localStorage.getItem(keyId));
+                console.log(updateEntry)
+                titleInput.value = updateEntry.title;
+                descriptionInput.value = updateEntry.description;
+                dateInput.value = updateEntry.untilDate;
+                updateKey = updateEntry.key;
+            });
             buttons.textContent = "Delete";
             buttons.classList.add("delete-btn");
             buttons.setAttribute(`id`, diaryEntry.key);
@@ -89,10 +115,10 @@ function showContent(lsLength) {
             h2.innerText = diaryEntry.title;
             p.innerText = diaryEntry.description;
             time.innerText = diaryEntry.untilDate;
+            buttonWrapper.append(updateBtn);
             buttonWrapper.append(buttons);
         }
     }
-    console.log(localStorage)
 }
 
 function countTime(uniqueDate) {
@@ -108,23 +134,16 @@ function countTime(uniqueDate) {
 
 function getDateObject() {
     lsArr.length = 0;
-    uniqueFinalDates.length = 0;
     for (let i = 0; i < localStorage.length; i++) {
         const ls = localStorage.getItem(keys[i]);
         const parsedLs = JSON.parse(ls);
         lsArr.push(parsedLs)
     }
-    const finalDates = lsArr.filter(obj => parseInt(obj.untilDate) > 1  ).map(obj => obj.untilDate);
-    uniqueFinalDates = [...new Set(finalDates)]
-    console.log(uniqueFinalDates)
 }
 
 document.getElementById("form").addEventListener("submit", function(event) {
     event.preventDefault();
     keys.length = 0;
-    const title = document.getElementById("titleInput");
-    const description = document.getElementById("descInput");
-    const inputDate = document.getElementById("dateInput");
     const time = new Date;
     const date = {
         year: time.getFullYear(),
@@ -135,30 +154,37 @@ document.getElementById("form").addEventListener("submit", function(event) {
         seconds: String(time.getSeconds()).padStart(2, '0'),
         milSeconds: String(time.getMilliseconds()).padStart(2, '0')
     };
-    const dateKey = `${date.year}${date.month}${date.day}${date.hours}${date.minutes}${date.seconds}${date.milSeconds}`;
-
+    let dateKey = "";
+    if (updateKey === "") {
+        dateKey = `${date.year}${date.month}${date.day}${date.hours}${date.minutes}${date.seconds}${date.milSeconds}`;
+    } else {
+        dateKey = updateKey;
+    }
     const diary = {
-        title: title.value,
-        description: description.value,
-        untilDate: inputDate.value,
+        title: titleInput.value,
+        description: descriptionInput.value,
+        untilDate: dateInput.value,
         key: dateKey
     }
+    
+    localStorage.setItem(dateKey, JSON.stringify(diary));
+    dateFilterInput.value = diary.untilDate;
+    filterDate = diary.untilDate;
+    titleInput.value = "";
+    descriptionInput.value = "";
+    dateInput.value = "";
+    updateKey = "";
+    console.log(updateKey)
+    showContent();
+});
 
-    if(diary.untilDate.replace(/-/g, "") - parseInt(`${date.year}${date.month}${date.day}`) < 0) {
-        title.value = "";
-        description.value = "";
-        inputDate.value = "";
-        
-    } else {
-        localStorage.setItem(dateKey, JSON.stringify(diary));
-    } 
-
-    title.value = "";
-    description.value = "";
-    inputDate.value = "";
-    showContent(lsLength);
+dateFilterInput.addEventListener("change", function filterDates() {
+    filterDate = this.value;    
+    console.log(filterDate)
+    showContent();
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    dateFilterInput.value = currentDate;
     showContent();
 });

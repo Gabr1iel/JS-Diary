@@ -16,12 +16,18 @@
                 <input type="text" id="descInput" description="description" class="input"/>
                 <label class="label">When</label>
                 <input type="date" id="dateInput" date="date" class="input"/>
-                <button type="submit">Save</button>
+                <button type="submit" id="submit-btn">Save</button>
             </form>
         </div>
     
         <div class="half">
-            <div id="diary-wrapper"></div>
+            <div id="diary-wrapper">
+                <div id="date-input-wrapper">
+                    <div onclick="changeDate(false)">&lt;</div>
+                    <input type="date" class="input" date="date" id="dateSelectInput"/>
+                    <div onclick="changeDate(true)">&gt;</div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
