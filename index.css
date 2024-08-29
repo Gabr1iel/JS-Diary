@@ -3,54 +3,13 @@ body {
     padding: 0;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.label {
-    margin-left: 10px;
-    font-size: 1.3rem;
-    font-weight: bold;
-}
-
-#diary-wrapper {
-    width: 95%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.unique-diary-wrapper {
-    display: flex;
-    flex-direction: column;
+#wrapper {
+    height: 100vh;
     width: 100%;
-}
-
-#date-input-wrapper {
-    display: flex;
-}
-
-.diary-content {
     display: flex;
     flex-direction: row;
-    width: 95%;
-    border-bottom: 2px solid grey
-}
-
-.diary-content div:last-child {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 25%;
-    margin: 1.5rem;
-}
-
-.diary-content div:first-child {
-    width: 75%;
-    margin: 1.5rem;
 }
 
 .half {
@@ -62,21 +21,120 @@ form {
     justify-content: center;
 }
 
-#wrapper {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
 .half:first-child {
     background-color: #b2fba5;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form button {
+    width: 35%;
+    margin-top: 1rem;
+    border-radius: 25px;
+    padding: 10px 0;
+    background-color: #93d7fa;
+    color: white;
+    font-weight: bold;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.label {
+    margin-left: 10px;
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
 .input {
+    width: 100%;
     border: 2px solid white;
     border-radius: 15px;
     padding: 5px 15px;
+}
+
+#dateInput {
+    text-align: center;
+}
+
+#diary-wrapper {
+    width: 95%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#date-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+#date-input-wrapper div, input {
+    font-size: 1.4rem;
+}
+
+#date-input-wrapper div:hover {
+    cursor: pointer;
+}
+
+.unique-diary-wrapper {
+    display: flex;
+    max-height: 550px;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.diary-content {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    border-bottom: 2px solid grey;
+    border-top-right-radius: 25px;
+    border-top-left-radius: 25px;
+}
+
+.diary-content div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 25%;
+    margin: 1.5rem;
+}
+
+.diary-content div:first-child {
+    width: 75%;
+    margin: 1.5rem;
+}
+
+.delete-btn, .update-btn {
+    border-radius: 25px;
+    padding: 5px 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background-color: #a32d26;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.update-btn {
+    background-color: #c9aa2c;
+    &:hover {
+        cursor: pointer;
+    }
 }
